@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ProductVM>
+
+@{
+    ViewData["Title"] = "Cart";
+
+}
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+
+    var shoppingList = HttpContextAccessor.HttpContext.Session.Get<List<int>>(SessionHelper.ShoppingCart);
+
+    var total = 0.0;
+
+}
+
+<h2 style="color: #45013d;">Shopping Cart</h2>
+<form>
+    <div class="card" style="padding:30px; background-color: #e0badc">
+        @if(shoppingList.Count != 0){
+
+            @foreach(var id in shoppingList)
+            {
+                @foreach(var product in Model)
+                {
+                    @if(product.Id == id)
+                    {
+                        @@total = @total + (double)@product.Price;
+
+                        <div class="form-group row" >
+                            <div class="col-2" >
+                                <img src="~/@product.ImagePath" alt="no image" width="100" height="140" style="border-radius:5px; border:1px solid #bbb9b9;" />
+                            </div>
+                            <div class="col-10">
+                                <h4>@product.Name</h4>
+                                <label style="font-weight:bold">Pret: &nbsp;</label>$@product.Price
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        }
+    <div class="row">
+        <div class="col-sm">
+            <label style="font-weight:bold;color:darkblue">Total price: &nbsp;$@total</label>
+
+        </div>
+        <div class="col-sm">
+        </div>
+
+        <div class="col-sm">
+            <div class="d-flex flex-row-reverse">
+                <button class="btn btn-outline-danger">Checkout</button>
+            </div>
+        </div>
+        
+    </div>
+           
+    </div>
+</form>
+

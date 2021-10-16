@@ -1,0 +1,120 @@
+﻿@model ProductVM
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    bool isInBag = false;
+    var lstCart = HttpContextAccessor.HttpContext.Session.Get<List<int>>(SessionHelper.ShoppingCart);
+    if (lstCart != null && lstCart.Contains(Model.Id))
+        isInBag = true;
+
+    var route = isInBag ? "/Remove/{0}" : "/Add/{0}";
+    route = string.Format(route, Model.Id);
+
+    bool isInFavorites = false;
+    var lstFavorites = HttpContextAccessor.HttpContext.Session.Get<List<int>>(SessionHelper.FavoriteProducts);
+    if (lstFavorites != null && lstFavorites.Contains(Model.Id))
+        isInFavorites = true;
+
+    var route2 = isInFavorites ? "/RemoveFavorite/{0}" : "/AddFavorite/{0}";
+    route2 = string.Format(route2, Model.Id);
+}
+
+<h2 style="color: #45013d;">Product Details</h2>
+
+<form action="@route2" method="post">
+    <div>
+        @if (isInFavorites)
+        {
+
+            <button type="submit" value="Remove from favorites" class="btn btn-outline-dark"><span class="fas fa-heart"></span></button>
+        }
+        else
+        {
+            <button type="submit" value="Add to favorites" style="color:red" class="btn btn-outline-danger"><span class="fas fa-heart"></span></button>
+
+        }
+    </div>
+</form>
+<form action="@route" method="post">
+
+    <div class="p-4 border rounded row">
+        <div class="col-8">
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label class="control-label font-weight-bold">Product name</label>
+                </div>
+                <div class="col-4">
+                    <input asp-for="Name" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label class="control-label font-weight-bold">Price</label>
+                </div>
+                <div class="col-4">
+                    <input asp-for="Price" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label class="control-label font-weight-bold">Description</label>
+                </div>
+                <div class="col-4">
+                    @Html.TextArea("Description", Model.Description, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label class="control-label font-weight-bold">Author</label>
+                </div>
+                <div class="col-4">
+                    <input asp-for="Author" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-4">
+                    <label class="control-label font-weight-bold">ISBN</label>
+                </div>
+                <div class="col-4">
+                    <input asp-for="ISBN" readonly class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-8">
+                    @if (isInBag)
+                    {
+                    <button type="submit" value="Remove from bag" class="btn btn-outline-dark form-control">Remove from Shopping Cart</button>
+                    }
+                    else
+                    {
+                <button type="submit" value="Add to bag" class="btn btn-outline-danger form-control">Add to Shopping Cart</button>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class=" col-1">
+
+        </div>
+
+        <div class="col-3">
+            <img src="~/@Model.ImagePath" alt="no image" style="border-radius:5px; border:1px solid #bbb9b9; height:350px; width:490px" />
+        </div>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <a asp-action="Index" class="btn btn-success">Back to List</a>
+    </div>
+
+</form>
